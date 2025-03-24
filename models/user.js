@@ -38,13 +38,13 @@ const User = sequelize.define("User", {
     allowNull: false,
     defaultValue: "user",
     validate: {
-      isIn: [["admin", "user", "начальник"]], // Проверка на допустимые значения добавь свои
+      isIn: [["Администратор", "пользователь", "работник", "начальник"]], // Проверка на допустимые значения добавь свои
     },
   },
   StatusNow: {
     type: DataTypes.STRING(50),
     allowNull: false,
-    defaultValue: "active",
+    defaultValue: "not activated",
   },
 });
 

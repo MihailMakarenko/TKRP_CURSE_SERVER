@@ -62,6 +62,18 @@ class TaskService {
 
     return tasks;
   }
+
+  async getTaskById(taskId) {
+    try {
+      const task = await Task.findByPk(taskId);
+      if (!task) {
+        throw new Error("Task not found.");
+      }
+      return task;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = new TaskService();

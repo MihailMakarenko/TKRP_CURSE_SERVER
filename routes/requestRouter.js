@@ -2,6 +2,7 @@ const Router = require("express");
 const router = new Router();
 const requestController = require("../controllers/requestController");
 
+router.get("/getAll", requestController.getRequestByUserWidthPagination);
 router.get(
   "/getRequestsByUserId/:userId",
   requestController.getRequestsByUserId

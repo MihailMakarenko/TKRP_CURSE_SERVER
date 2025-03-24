@@ -7,13 +7,13 @@ class SeedTasks {
       {
         Category: "Обслуживание",
         Description: "Проверка оборудования в корпусе 1.",
-        PhotoPath: "photos/equipment_check.jpg",
+        PhotoPath: "Group45.png",
         LocationId: 1, // Убедитесь, что такие местоположения существуют
       },
       {
         Category: "Ремонт",
         Description: "Ремонт системы отопления в корпусе 2.",
-        PhotoPath: "photos/heating_repair.jpg",
+        PhotoPath: "Group45.png",
         LocationId: 2,
       },
       {
@@ -25,19 +25,19 @@ class SeedTasks {
       {
         Category: "Проверка",
         Description: "Проверка системы безопасности в корпусе 3.",
-        PhotoPath: "photos/security_check.jpg",
+        PhotoPath: "Group45.png",
         LocationId: 3,
       },
       {
         Category: "Обслуживание",
         Description: "Проверка электрических систем в корпусе 4.",
-        PhotoPath: "photos/electrical_check.jpg",
+        PhotoPath: "Group45.png",
         LocationId: 4,
       },
       {
         Category: "Ремонт",
         Description: "Ремонт крыши в корпусе 1.",
-        PhotoPath: "photos/roof_repair.jpg",
+        PhotoPath: "Group45.png",
         LocationId: 1,
       },
       {
@@ -49,7 +49,7 @@ class SeedTasks {
       {
         Category: "Обслуживание",
         Description: "Регулярное обслуживание системы вентиляции.",
-        PhotoPath: "photos/ventilation_service.jpg",
+        PhotoPath: "Group45.png",
         LocationId: 3,
       },
     ];

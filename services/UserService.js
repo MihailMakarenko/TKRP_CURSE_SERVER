@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const { sendPassword } = require("./EmailService");
 
 class UserService {
   async login(email, password) {
@@ -11,13 +12,22 @@ class UserService {
   }
 
   async registration(data) {
-    console.log("AAAA");
-    console.log(data);
     const saltRounds = 10;
 
     try {
       const hashedPassword = bcrypt.hashSync(data.Password, saltRounds);
-      return await User.create({ ...data, Password: hashedPassword });
+      const UserCreate = await User.create({
+        ...data,
+        Password: hashedPassword,
+      });
+      const response = await sendPassword(
+        UserCreate.Email,
+        data.Password
+      ).catch((err) => {
+        console.error("Ошибка при отправке пароля:", err);
+        throw new Error("Failed to send password email");
+      });
+      return UserCreate;
     } catch (error) {
       console.error("Ошибка при регистрации:", error);
       throw error; // Или обработайте ошибку как вам нужно

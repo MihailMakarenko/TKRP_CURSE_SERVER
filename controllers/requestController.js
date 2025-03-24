@@ -1,4 +1,5 @@
 const RequestService = require("../services/RequestService");
+// const TaskService = require
 
 class RequestController {
   // Добавить новый запрос
@@ -15,6 +16,56 @@ class RequestController {
       });
       res.status(201).json(newRequest);
     } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  async addTaskAndRequest(req, res) {
+    const {
+      Category,
+      Description,
+      PhotoPath,
+      LocationId,
+      RequestPriority,
+      DateTime,
+      RequestStatus,
+      UserId,
+    } = req.body;
+
+    const transaction = await sequelize.transaction(); // Создаем транзакцию
+
+    try {
+      // Добавляем новую задачу
+      const newTask = await TaskService.addTask(
+        {
+          Category,
+          Description,
+          PhotoPath,
+          LocationId,
+        },
+        { transaction }
+      );
+
+      // Добавляем новый запрос с ID задачи
+      const newRequest = await RequestService.addRequest(
+        {
+          RequestPriority,
+          DateTime,
+          RequestStatus,
+          TaskId: newTask.id, // Используем ID только что созданной задачи
+          UserId,
+        },
+        { transaction }
+      );
+
+      // Подтверждаем транзакцию
+      await transaction.commit();
+
+      // Возвращаем созданные объекты
+      res.status(201).json({ newTask, newRequest });
+    } catch (error) {
+      // Откатываем транзакцию в случае ошибки
+      await transaction.rollback();
       res.status(400).json({ message: error.message });
     }
   }
@@ -74,6 +125,21 @@ class RequestController {
     try {
       const requests = await RequestService.getRequestsByUserId(userId);
       res.status(200).json(requests);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  }
+
+  async getRequestByUserWidthPagination(req, res) {
+    console.log(req.query);
+    const { limit, page } = req.query;
+    try {
+      const request = await RequestService.getRequestByUserWithPagination(
+        limit,
+        page
+      );
+
+      res.status(200).json(request);
     } catch (error) {
       res.status(404).json({ message: error.message });
     }

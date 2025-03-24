@@ -1,4 +1,8 @@
+const { model } = require("../db");
 const Request = require("../models/request");
+const { Task } = require("../models/index.js");
+const { Location } = require("../models/index.js");
+const { Comment } = require("../models/index.js");
 const { Op } = require("sequelize");
 
 class RequestService {
@@ -50,6 +54,49 @@ class RequestService {
     if (requests.length === 0) {
       throw new Error("Запросов не найдено за указанный период");
     }
+    return requests;
+  }
+
+  async getRequestByUserWithPagination(limit, page) {
+    const offset = (page - 1) * limit; // Расчет смещения для пагинации
+    console.log("rst");
+
+    const requests = await Request.findAll({
+      limit: limit,
+      offset: offset,
+      include: [
+        {
+          model: Task,
+          as: "task",
+          include: [
+            {
+              model: Location,
+              as: "location",
+            },
+          ],
+        },
+        {
+          model: Comment,
+          as: "comments",
+        },
+      ],
+    });
+
+    // Предположим, что вы хотите добавить префикс к PhotoPath
+    const photoPrefix = "/task/uploads/tasksPhoto/"; // Ваш префикс
+
+    const modifiedRequests = requests.map((request) => {
+      // Если у вас есть доступ к PhotoPath через task
+      if (request.task && request.task.PhotoPath) {
+        request.task.PhotoPath = photoPrefix + request.task.PhotoPath;
+      }
+      return request;
+    });
+
+    if (requests.length === 0) {
+      throw new Error("Запросов не найдено на текущей странице");
+    }
+
     return requests;
   }
 }

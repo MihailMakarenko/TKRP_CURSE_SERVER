@@ -1,4 +1,6 @@
 const UserService = require("../services/UserService");
+const generator = require("password-generator");
+const User = require("../models/user");
 
 class UserController {
   // Метод для входа
@@ -21,12 +23,16 @@ class UserController {
       SecondName,
       LastName,
       PhoneNumber,
-      Password = "rttrstrstr",
+      Password,
       Role,
     } = req.body;
 
+    // Генерация пароля, если он не предоставлен пользователем
+    const finalPassword = Password || generator(12, false);
+    console.log(finalPassword);
+
     // Проверка обязательных полей
-    if (!Email || !FirstName || !LastName || !Password || !Role) {
+    if (!Email || !FirstName || !LastName || !finalPassword || !Role) {
       return res
         .status(400)
         .json({ message: "Все поля обязательны для заполнения." });
@@ -38,34 +44,44 @@ class UserController {
       return res.status(400).json({ message: "Некорректный формат email." });
     }
 
-    // Проверка длины пароля
-    if (Password.length < 6) {
-      // Минимальная длина пароля
-      return res
-        .status(400)
-        .json({ message: "Пароль должен содержать минимум 6 символов." });
-    }
-
     try {
+      // Проверка на существование пользователя с таким email
+      const existingUser = await User.findOne({ where: { Email } });
+      if (existingUser) {
+        return res
+          .status(409)
+          .json({ message: "Пользователь с таким email уже существует." });
+      }
+
+      // Создание нового пользователя
       const newUser = await UserService.registration({
         Email,
         FirstName,
         SecondName,
         LastName,
         PhoneNumber,
-        Password,
+        Password: finalPassword,
         Role,
       });
+
       res.status(201).json({
         message: "Пользователь успешно зарегистрирован",
         user: newUser,
       });
     } catch (error) {
-      console.error("Ошибка при регистрации:", error);
-      res.status(400).json({ message: error.message });
+      console.error("Ошибка при регистрации:", error.message);
+      res.status(500).json({ message: "Произошла ошибка при регистрации." });
+    }
+
+    // Если вы хотите отправить сообщение, если email не существует
+    // это обычно происходит на этапе авторизации, а не регистрации.
+    const userToCheck = await User.findOne({ where: { Email } });
+    if (!userToCheck) {
+      return res
+        .status(404)
+        .json({ message: "Пользователь с таким email не найден." });
     }
   }
-
   // Метод для получения всех пользователей
   async getAll(req, res) {
     try {
