@@ -46,6 +46,14 @@ const User = sequelize.define("User", {
     allowNull: false,
     defaultValue: "not activated",
   },
+
+  ImageName: { type: DataTypes.STRING(255), allowNull: true },
+
+  chatIdTg: {
+    type: DataTypes.BIGINT, // Используйте BIGINT для больших чисел
+    allowNull: true,
+    unique: true,
+  },
 });
 
 module.exports = User;

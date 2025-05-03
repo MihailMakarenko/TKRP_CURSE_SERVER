@@ -1,4 +1,4 @@
-const sequelize = require("../db.js"); //импорт настроек БД
+const sequelize = require("../db.js"); // Импорт настроек БД
 
 const SeedUsers = require("./userSeed.js"); // Путь к сидеру
 const SeedComments = require("./commentSeed.js"); // Путь к сидеру
@@ -12,7 +12,7 @@ const SeedTasks = require("./taskSeed.js"); // Путь к сидеру
 async function seedDatabase() {
   try {
     await sequelize.authenticate(); // Подключение к БД
-    await sequelize.sync(); // Сверка состояния БД со схемой БД
+    //await sequelize.sync({ force: true }); // ВНИМАНИЕ: это удалит все ваши данные в таблицах
 
     const seedUsers = new SeedUsers();
     await seedUsers.seed();

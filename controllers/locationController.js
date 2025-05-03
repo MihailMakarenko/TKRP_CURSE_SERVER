@@ -2,9 +2,23 @@ const LocationService = require("../services/LocationService");
 
 class LocationController {
   // Добавить новое местоположение
+  // В вашем контроллере
   async addLocation(req, res) {
     const { CorpsNumber, HullNumber, RoomNumber } = req.body;
     try {
+      // Проверяем, существует ли запись с такими же данными
+      const existingLocation = await LocationService.findLocation({
+        CorpsNumber,
+        HullNumber,
+        RoomNumber,
+      });
+
+      if (existingLocation) {
+        return res
+          .status(409)
+          .json({ message: "Запись с такими данными уже существует." });
+      }
+
       const newLocation = await LocationService.addLocation({
         CorpsNumber,
         HullNumber,

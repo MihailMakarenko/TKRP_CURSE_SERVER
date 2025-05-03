@@ -1,6 +1,10 @@
 const path = require("path"); // Импортируйте модуль path
 const fs = require("fs"); // Импортируйте модуль fs
 const TaskService = require("../services/TaskService");
+const Task = require("../models/task"); // Импортируйте модель Task
+const Request = require("../models/request"); // Импортируйте модель Request
+const Location = require("../models/location"); // Импортируйте сервис для поиска LocationId
+const tgService = require("../services/tgUserSercice");
 
 class TaskController {
   async addTask(req, res) {
@@ -125,6 +129,67 @@ class TaskController {
       }
       res.sendFile(photoPath);
     });
+  }
+
+  async createTask(req, res) {
+    const {
+      requestType,
+      description,
+      corpsNumber,
+      hullNumber,
+      roomNumber,
+      priority,
+    } = req.body;
+    // Получаем userId из токена
+    const userId = req.user.id; // Предполагается, что id хранится в токене
+    const photoPath = req.file ? `${req.file.filename}` : null;
+    try {
+      // Находим LocationId
+      const location = await Location.findOne({
+        where: {
+          CorpsNumber: corpsNumber,
+          HullNumber: hullNumber,
+          RoomNumber: roomNumber,
+        },
+      });
+      if (!location) {
+        return res.status(404).json({
+          success: false,
+          message: "Местоположение не найдено.",
+        });
+      }
+      const locationId = location.LocationId;
+      // Создаем новую задачу
+      const newTask = await Task.create({
+        Category: requestType,
+        Description: description,
+        PhotoPath: photoPath,
+        LocationId: locationId,
+      });
+      // Создаем новый запрос
+      const newRequest = await Request.create({
+        RequestPriority: priority,
+        DateTime: new Date(),
+        RequestStatus: "новый",
+        TaskId: newTask.TaskId,
+        UserId: userId,
+      });
+
+      tgService.notifyWorkers(newRequest, newTask, location);
+
+      // Возвращаем ID задачи, ID местоположения и ID запроса
+      return res.status(201).json({
+        taskId: newTask.TaskId,
+        locationId: locationId,
+        requestId: newRequest.RequestId,
+      });
+    } catch (error) {
+      console.error("Ошибка при создании задачи и запроса:", error);
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
   }
 }
 

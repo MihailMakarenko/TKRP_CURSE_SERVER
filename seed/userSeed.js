@@ -1,5 +1,6 @@
 // Файл: seedUsers.js
 const User = require("../models/user"); // Путь к модели User
+const TgUser = require("../models/tgUser");
 
 class SeedUsers {
   async seed() {
@@ -11,7 +12,7 @@ class SeedUsers {
         LastName: "Smith",
         Password: "password123", // Не забудьте хэшировать пароли в реальном приложении
         PhoneNumber: "123-456-7890",
-        Role: "admin",
+        Role: "Администратор",
         StatusNow: "active",
       },
       {
@@ -21,7 +22,7 @@ class SeedUsers {
         LastName: "Johnson",
         Password: "password123",
         PhoneNumber: "234-567-8901",
-        Role: "user",
+        Role: "пользователь",
         StatusNow: "active",
       },
       {
@@ -31,7 +32,7 @@ class SeedUsers {
         LastName: "Williams",
         Password: "password123",
         PhoneNumber: "345-678-9012",
-        Role: "user",
+        Role: "пользователь",
         StatusNow: "active",
       },
       {
@@ -41,7 +42,7 @@ class SeedUsers {
         LastName: "Jones",
         Password: "password123",
         PhoneNumber: "456-789-0123",
-        Role: "user",
+        Role: "пользователь",
         StatusNow: "active",
       },
       {
@@ -51,7 +52,7 @@ class SeedUsers {
         LastName: "Martinez",
         Password: "password123",
         PhoneNumber: "567-890-1234",
-        Role: "user",
+        Role: "пользователь",
         StatusNow: "active",
       },
       {
@@ -61,7 +62,7 @@ class SeedUsers {
         LastName: "Taylor",
         Password: "password123",
         PhoneNumber: "678-901-2345",
-        Role: "user",
+        Role: "пользователь",
         StatusNow: "active",
       },
       {
@@ -71,7 +72,7 @@ class SeedUsers {
         LastName: "Hernandez",
         Password: "password123",
         PhoneNumber: "789-012-3456",
-        Role: "user",
+        Role: "пользователь",
         StatusNow: "active",
       },
       {
@@ -81,7 +82,7 @@ class SeedUsers {
         LastName: "Martin",
         Password: "password123",
         PhoneNumber: "890-123-4567",
-        Role: "user",
+        Role: "пользователь",
         StatusNow: "active",
       },
       {
@@ -91,7 +92,7 @@ class SeedUsers {
         LastName: "Lee",
         Password: "password123",
         PhoneNumber: "901-234-5678",
-        Role: "user",
+        Role: "пользователь",
         StatusNow: "active",
       },
       {
@@ -101,7 +102,7 @@ class SeedUsers {
         LastName: "Perez",
         Password: "password123",
         PhoneNumber: "012-345-6789",
-        Role: "user",
+        Role: "пользователь",
         StatusNow: "active",
       },
     ];
@@ -111,6 +112,7 @@ class SeedUsers {
 
       if (existingUsers === 0) {
         await User.bulkCreate(users);
+        // await TgUser.bulkCreate();
         console.log("База данных пользователей успешно заполнена.");
       } else {
         console.log(

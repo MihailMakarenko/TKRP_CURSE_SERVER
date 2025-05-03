@@ -57,11 +57,12 @@ class RequestService {
     return requests;
   }
 
-  async getRequestByUserWithPagination(limit, page) {
+  async getRequestByUserWithPagination(limit, page, userId) {
     const offset = (page - 1) * limit; // Расчет смещения для пагинации
-    console.log("rst");
+    console.log("Fetching requests for user:", userId);
 
     const requests = await Request.findAll({
+      where: { UserId: userId }, // Фильтруем запросы по userId
       limit: limit,
       offset: offset,
       include: [
@@ -82,6 +83,9 @@ class RequestService {
       ],
     });
 
+    // console.log(requests);
+    // console.log("AAAAAAAAAAA");
+
     // Предположим, что вы хотите добавить префикс к PhotoPath
     const photoPrefix = "/task/uploads/tasksPhoto/"; // Ваш префикс
 
@@ -93,11 +97,12 @@ class RequestService {
       return request;
     });
 
+    // Проверка на наличие запросов
     if (requests.length === 0) {
       throw new Error("Запросов не найдено на текущей странице");
     }
 
-    return requests;
+    return modifiedRequests; // Возвращаем модифицированные запросы
   }
 }
 

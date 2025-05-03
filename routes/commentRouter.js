@@ -1,9 +1,10 @@
 const Router = require("express");
 const router = new Router();
 const commentController = require("../controllers/commentController");
+const authenticateToken = require("../middleware/passport");
 
 router.get("/getCommentById/:commentId", commentController.getCommentById);
-router.post("/", commentController.createComment);
+router.post("/", authenticateToken, commentController.createComment);
 router.get("/", commentController.getAll);
 router.put("/:id", commentController.updateCommentById);
 router.delete("/:id", commentController.deleteCommentById);

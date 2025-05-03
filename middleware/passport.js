@@ -27,3 +27,24 @@
 //     })
 //   );
 // };
+
+const jwt = require("jsonwebtoken");
+
+const authenticateToken = (req, res, next) => {
+  const token =
+    req.headers["authorization"] && req.headers["authorization"].split(" ")[1];
+
+  if (!token) {
+    return res.sendStatus(401); // Unauthorized
+  }
+  console.log(token);
+  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+    if (err) {
+      return res.sendStatus(403); // Forbidden
+    }
+    req.user = user; // Сохраняем информацию о пользователе в объекте запроса
+    next();
+  });
+};
+
+module.exports = authenticateToken;

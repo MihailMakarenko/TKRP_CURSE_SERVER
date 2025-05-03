@@ -6,42 +6,42 @@ class SeedLocations {
     const locations = [
       {
         CorpsNumber: 1,
-        HullNumber: 101,
-        RoomNumber: 201,
+        HullNumber: 1,
+        RoomNumber: 101,
       },
       {
         CorpsNumber: 1,
-        HullNumber: 102,
+        HullNumber: 2,
         RoomNumber: 202,
       },
       {
         CorpsNumber: 2,
-        HullNumber: 201,
+        HullNumber: 3,
         RoomNumber: 301,
       },
       {
         CorpsNumber: 2,
-        HullNumber: 202,
+        HullNumber: 3,
         RoomNumber: 302,
       },
       {
         CorpsNumber: 3,
-        HullNumber: 301,
+        HullNumber: 4,
         RoomNumber: 401,
       },
       {
         CorpsNumber: 3,
-        HullNumber: 302,
+        HullNumber: 4,
         RoomNumber: 402,
       },
       {
         CorpsNumber: 4,
-        HullNumber: 401,
+        HullNumber: 5,
         RoomNumber: 501,
       },
       {
         CorpsNumber: 4,
-        HullNumber: 402,
+        HullNumber: 5,
         RoomNumber: 502,
       },
     ];

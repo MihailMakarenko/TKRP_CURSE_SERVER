@@ -1,4 +1,5 @@
 const RequestService = require("../services/RequestService");
+const tgService = require("../services/tgUserSercice");
 // const TaskService = require
 
 class RequestController {
@@ -7,6 +8,7 @@ class RequestController {
     const { RequestPriority, DateTime, RequestStatus, TaskId, UserId } =
       req.body;
     try {
+      console.log("2222222222222");
       const newRequest = await RequestService.addRequest({
         RequestPriority,
         DateTime,
@@ -14,6 +16,8 @@ class RequestController {
         TaskId,
         UserId,
       });
+      console.log("11111111111111111111");
+      const notification = await tgService.sendNotificationForWorker();
       res.status(201).json(newRequest);
     } catch (error) {
       res.status(400).json({ message: error.message });
@@ -21,6 +25,7 @@ class RequestController {
   }
 
   async addTaskAndRequest(req, res) {
+    await console.log("rattatatat");
     const {
       Category,
       Description,
@@ -61,6 +66,7 @@ class RequestController {
       // Подтверждаем транзакцию
       await transaction.commit();
 
+      const notification = await tgService.sendNotificationForWorker();
       // Возвращаем созданные объекты
       res.status(201).json({ newTask, newRequest });
     } catch (error) {
@@ -131,12 +137,14 @@ class RequestController {
   }
 
   async getRequestByUserWidthPagination(req, res) {
-    console.log(req.query);
+    const userId = req.user.id;
+
     const { limit, page } = req.query;
     try {
       const request = await RequestService.getRequestByUserWithPagination(
         limit,
-        page
+        page,
+        userId
       );
 
       res.status(200).json(request);

@@ -3,8 +3,11 @@ const CommentService = require("../services/CommentService");
 class CommentController {
   // Создать новый комментарий
   async createComment(req, res) {
-    const { Text, DateTime, UserId, RequestId } = req.body;
+    console.log("Мы тут");
+    const { RequestId, Text } = req.body;
+    const UserId = req.user.id;
     try {
+      const DateTime = new Date(); // Получаем текущее время
       const newComment = await CommentService.createComment({
         Text,
         DateTime,
