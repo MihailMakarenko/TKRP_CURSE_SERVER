@@ -4,7 +4,7 @@ const TgUser = require("../models/tgUser");
 const User = require("../models/user");
 
 class TgUserService {
-  constructor(botToken = "7546897650:AAGlP7BudF_vSU0XnyCEZXDuHGUuRl71s_A") {
+  constructor(botToken = "") {
     this.TELEGRAM_BOT_TOKEN = botToken;
   }
 
