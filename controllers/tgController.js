@@ -1,5 +1,5 @@
 const axios = require("axios");
-const TELEGRAM_BOT_TOKEN = "7546897650:AAGlP7BudF_vSU0XnyCEZXDuHGUuRl71s_A";
+const TELEGRAM_BOT_TOKEN = "";
 const tgUserService = require("../services/tgUserSercice");
 
 class TgController {
