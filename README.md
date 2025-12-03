@@ -1,5 +1,4 @@
 # Автоматизированная система управления заявками на обслуживание  
-**«ТехПоддержка УЗ»** — Service Desk для образовательного учреждения
 
 Современное образовательное учреждение ежедневно сталкивается с десятками хозяйственных, технических и IT-инцидентов: перегоревшие лампы в аудиториях, неисправные проекторы, протечки, проблемы с Wi-Fi, поломки мебели и сантехники.
 
@@ -33,7 +32,7 @@ docker compose up -d --build
 После запуска:
 
 Frontend → http://localhost:3000
-Backend API → http://localhost:7001
+Backend API → http://localhost:5000
 Swagger-документация → http://localhost:7001/api-docs
 
 Структура проекта
@@ -45,13 +44,12 @@ text.
 │   ├── Dockerfile
 │   ├── .env.example            # шаблон переменных
 │   └── src/.env                # реальные переменные (не коммитить!)
-├── backup-db.ps1               # резервное копирование БД (Windows)
-├── restore-db.ps1              # восстановление БД из дампа
+├── backup_db.ps1               # резервное копирование БД (Windows)
+├── restore_db.ps1              # восстановление БД из дампа
 ├── dump.sql                    # создаётся автоматически при бэкапе
 └── README.md                   # этот файл
 Переменные окружения (server/.env)
-envPORT=7001
-NODE_ENV=development
+envPORT=5000
 
 # Подключение к PostgreSQL внутри Docker-сети
 DB_HOST=db
@@ -61,22 +59,27 @@ DB_USER=desk_user
 DB_PASSWORD=super_secure_password_2025_change_it
 DB_DIALECT=postgres
 
-# JWT
-JWT_SECRET=your_very_strong_random_secret_2025_must_be_changed
-JWT_EXPIRES_IN=30d
-Важно: в docker-compose.yml значение POSTGRES_PASSWORD должно совпадать с DB_PASSWORD!
-Резервное копирование и восстановление (Windows PowerShell)
-PowerShell# Создать бэкап (файл dump.sql появится в корне)
-.\backup-db.ps1
+## Часто встречающиеся проблемы и решения
 
-# Восстановить из последнего дампа
-.\restore-db.ps1
-Часто встречающиеся проблемы и решения
+| Проблема                              | Причина                              | Решение                                                                 |
+|---------------------------------------|--------------------------------------|-------------------------------------------------------------------------|
+| Порты 3000 / 7001 уже заняты          | Локальные приложения или старые контейнеры | Остановить конфликтующие процессы или изменить `ports` в `docker-compose.yml` |
+| Контейнер backend «unhealthy»         | Нет соединения с БД                  | Убедиться, что `DB_HOST=db` и `DB_PASSWORD` в `.env` совпадает с `POSTGRES_PASSWORD` в `docker-compose.yml` |
+| После `restore-db.ps1` данные не появились | Отсутствует файл `dump.sql`         | Сначала выполнить `.\backup-db.ps1` хотя бы один раз                    |
+| Ошибки CORS в браузере                | Frontend-домен не разрешён на бэкенде| CORS уже настроен для `http://localhost:3000` — просто перезапустите контейнеры |
+| Миграции/сиды не применились          | Контейнер запущен без пересборки     | Выполнить `docker compose up --build -d backend`                        |
 
-ПроблемаПричинаРешениеПорты 3000 / 7001 уже занятыЛокальные приложенияОстановить их или изменить порты в docker-compose.ymlКонтейнер backend «unhealthy»Нет соединения с БДПроверить совпадение паролей и DB_HOST=dbПосле restore данные не появилисьНет файла dump.sqlСначала выполнить backup-db.ps1Ошибки CORSFrontend-домен не разрешёнCORS уже настроен на http://localhost:3000Миграции не применилисьКонтейнер запущен без пересборкиdocker compose up --build -d backend
-Полезные команды
-Bash# Полная пересборка и перезапуск
-docker compose down -v && docker compose up -d --build
+## Полезные команды Docker
+
+| Действие                              | Команда                                                       |
+|---------------------------------------|---------------------------------------------------------------|
+| Полная пересборка и перезапуск        | `docker compose down -v && docker compose up -d --build`      |
+| Пересобрать только backend            | `docker compose up --build -d backend`                        |
+| Посмотреть логи backend               | `docker compose logs -f backend`                              |
+| Посмотреть логи frontend              | `docker compose logs -f client`                               |
+| Зайти в контейнер с базой данных     | `docker compose exec db psql -U desk_user -d servicedesk`     |
+| Остановить всё                       | `docker compose down`                                         |
+| Остановить и удалить тома (полная очистка) | `docker compose down -v`                                 |
 
 # Просмотр логов
 docker compose logs -f backend
